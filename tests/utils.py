@@ -4,10 +4,10 @@ from sqlalchemy import create_engine, StaticPool, text
 from sqlalchemy.orm import sessionmaker, relationship
 from starlette.testclient import TestClient
 
-from morizstudioapp.database import Base
-from morizstudioapp.main import app
-from morizstudioapp.models import Trainer, Limitation
-from morizstudioapp.routers.auth import bcryptcontext
+from ..database import Base
+from ..main import app
+from ..models import Trainer, Limitation
+from ..routers.auth import bcryptcontext
 
 client= TestClient(app)
 
