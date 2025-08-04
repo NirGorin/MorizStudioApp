@@ -1,7 +1,9 @@
 #test.test_trainer_limitation file:
-from .utils import *
+from .utils import app,client,override_get_current_user,override_get_db,TestingSession,Trainer
 from fastapi import status
-from MorizApp.routers.auth import get_current_user,get_db
+from ..routers.auth import get_current_user,get_db
+from sqlalchemy import text
+
 
 
 app.dependency_overrides[get_current_user]=override_get_current_user

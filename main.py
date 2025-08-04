@@ -1,8 +1,8 @@
 #main file:
 from fastapi import FastAPI
 
-from MorizApp.database import engine, Base
-from MorizApp.routers import trainers, auth, limitations, admin
+from .database import engine, Base
+from .routers import trainers, auth, limitations, admin
 
 app=FastAPI()
 Base.metadata.create_all(bind=engine)

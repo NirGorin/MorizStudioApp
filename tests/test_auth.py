@@ -4,9 +4,9 @@ from datetime import timedelta
 
 from jose import jwt
 from starlette import status
-
+import pytest
 from ..routers.auth import get_db, authenticate_user, SECRET_KEY, ALGORITHM, create_access_token, get_current_user
-from .utils import *
+from .utils import app,override_get_db,TestingSession,client
 
 app.dependency_overrides[get_db]=override_get_db()
 

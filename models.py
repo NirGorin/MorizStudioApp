@@ -4,7 +4,7 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
-from MorizApp.database import Base
+from .database import Base
 
 
 
