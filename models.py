@@ -1,35 +1,46 @@
 
 #models file:
 
-from sqlalchemy import Column, String, Integer, ForeignKey, Table
+from sqlalchemy import Column, String, Integer, ForeignKey, Table, Text
 from sqlalchemy.orm import relationship
-
+from sqlalchemy import Enum as PgEnum
+from .enums import RoleEnum, GenderEnum
 from .database import Base
 
 
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    first_name = Column(String(30), index=True)
+    last_name = Column(String(30), index=True)
+    username = Column(String(30), unique=True, index=True)
+    email = Column(String(50), unique=True, index=True)
+    hashed_password = Column(String)
+    role   = Column(PgEnum(RoleEnum,   name="role_enum"),   nullable=False, default=RoleEnum.trainee)
+    phone_number = Column(String(15), unique=True, index=True)
+    studio_id = Column(Integer, ForeignKey("studios.id"))
+    trainee_id = Column(Integer, ForeignKey("trainee_profiles.id"))
 
-trainer_limitation= Table('trainer_limitation', Base.metadata,
-                          Column('trainer_id', Integer, ForeignKey('trainers.ID')),
-                          Column('limitation_id', Integer, ForeignKey('limitations.ID'))
-                         )
+class Studio(Base):
+    __tablename__ = "studios"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    studio_email = Column(String, unique=True, index=True)
+    
+class TraineeProfile(Base):
+    __tablename__ = "trainee_profiles"
+    id = Column(Integer, primary_key=True, index=True)
+    age = Column(Integer)
+    gender = Column(PgEnum(GenderEnum,name="gender_enum"), nullable=False)
+    height_cm = Column(Integer)
+    weight_kg = Column(Integer)
+    level = Column(String(15))
+    number_of_week_training = Column(Integer)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    limitations = Column(Text, nullable=True)
+    ai_status  = Column(String(16), default="idle", nullable=False)  
+    ai_summary = Column(Text)
+    ai_json    = Column(Text)
 
 
-class Trainer(Base):
-    __tablename__='trainers'
-    ID=Column(Integer,primary_key=True,index=True)
-    First_Name=Column(String(100))
-    Last_Name=Column(String(100))
-    username=Column(String(100),unique=True)
-    Email=Column(String(100),unique=True)
-    Password=Column(String(100))
-    Level=Column(String(100))
-    Number_Of_Training=Column(Integer)
-    Role=Column(String(100))
-    Phone_Number=Column(String(20),unique=True)
-    Limitations=relationship("Limitation",secondary=trainer_limitation,back_populates="Trainers")
-
-class Limitation(Base):
-    __tablename__='limitations'
-    ID=Column(Integer,primary_key=True,index=True)
-    limitation = Column(String(100))
-    Trainers=relationship("Trainer",secondary=trainer_limitation,back_populates="Limitations")
+    
