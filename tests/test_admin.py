@@ -1,5 +1,6 @@
 #test.test_admin file:
-from .utils import *
+from .utils import client, app, TestingSession, override_get_current_user, override_get_db, Limitation
+from sqlalchemy import text
 from fastapi import status
 
 from .test_trainers import override_get_db,override_get_current_user

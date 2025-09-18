@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql.functions import user
 from starlette import status
 from passlib.context import CryptContext
-from MorizApp.database import SessionMoriz
-from MorizApp.models import Trainer
+from ..database import SessionMoriz
+from ..models import Trainer
 
 from .auth import get_current_user
 

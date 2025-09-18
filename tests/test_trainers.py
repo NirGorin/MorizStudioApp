@@ -1,10 +1,10 @@
 #test.test_trainers file:
-from MorizApp.routers.auth import get_current_user
-from MorizApp.routers.trainers import get_db
+from ..routers.auth import get_current_user
+from ..routers.trainers import get_db
 
 from fastapi import status
 
-from MorizApp.test.utils import override_get_current_user,override_get_db
+from .utils import override_get_current_user,override_get_db,app,client,TestingSession,Trainer
 
 from .utils import *
 
