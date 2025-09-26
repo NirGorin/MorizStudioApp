@@ -1,7 +1,7 @@
 import json
 from datetime import datetime, timezone
-from app.services.aws_clients import sns
-from app.core.settings import settings
+from .aws_clients import sns
+from ..core.settings import settings
 
 def publish_event(event_type: str, payload: dict) -> None:
 

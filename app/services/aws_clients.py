@@ -1,5 +1,5 @@
 import boto3
-from app.core.settings import settings
+from ..core.settings import settings
 
 _session = boto3.session.Session(region_name=settings.AWS_REGION)
 

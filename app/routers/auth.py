@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 import os
 from sqlalchemy.testing.pickleable import User
-from .schemas import CreateUserRequest, Token
+from ..schemas import CreateUserRequest, Token
 
 from ..database import SessionMoriz
 from ..models import Studio, User, TraineeProfile
@@ -31,6 +31,7 @@ def get_db():
         db.close()
 
 db_dependecy = Annotated[Session,Depends(get_db)]
+
 
 ALGORITHM = os.getenv("ALGORITHM")
 SECRET_KEY= os.getenv("SECRET_KEY") 
@@ -60,9 +61,11 @@ async def get_current_user(token: token_jwt):
         return {'username': username, 'id': user_id, 'role': role}
     except JWTError:
         raise HTTPException(status_code=401, detail="Could not validate user")
+    
 
-@router.post("/create_trainer",status_code=status.HTTP_201_CREATED)
-async def create_trainer(db: db_dependecy, user: CreateUserRequest):
+
+@router.post("/create_user",status_code=status.HTTP_201_CREATED)
+async def create_user(db: db_dependecy, user: CreateUserRequest):
     user_model=User(
         first_name=user.First_Name,
         last_name=user.Last_Name,
@@ -75,10 +78,10 @@ async def create_trainer(db: db_dependecy, user: CreateUserRequest):
     db.add(user_model)
     db.commit()
 
-@router.post("/login",response_model=Token)
+@router.post("/login",response_model=Token,status_code=status.HTTP_200_OK)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],db: db_dependecy):
     user_model = authenticate_user(form_data.username, form_data.password, db)
     if not user_model:
-        raise HTTPException(status_code=401, detail="Incorrect username or password")
+        raise HTTPException (status_code=401, detail="Incorrect username or password")
     token = create_access_token(user_model.username, user_model.id, user_model.role, timedelta(minutes=20))
     return {'access_token': token, 'token_type': 'bearer'}
