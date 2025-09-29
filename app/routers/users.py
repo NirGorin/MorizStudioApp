@@ -27,13 +27,15 @@ r = redis.Redis.from_url(
 
 CACHE_TTL_SECONDS = 600
 
-@router.get("/{user_id}/",status_code=200,response_model=List[UserResponse])
+@router.get("/{user_id}/",status_code=200,response_model=UserResponse)
 def get_user(user_id: int, db: db_dependecy,user: user_dependecy):
     if not user:
         raise HTTPException(status_code=403, detail="Not authorized to access user information")
     user_model = db.query(User).filter(User.id == user_id).first()
     if not user_model:
         raise HTTPException(status_code=404, detail="User not found")
+    if user.get("id") != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this user's information")
     return user_model
 
 @router.get("/{user_id}/email")

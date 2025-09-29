@@ -68,6 +68,9 @@ async def register_studio(
         raise HTTPException(status_code=401, detail="User not authenticated")
 
     user_model = db.query(User).filter(User.id == user.get('id')).first()
+    if user_model is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
     if user_model.studio_id:
         raise HTTPException(status_code=400, detail="User already registered to a studio")
 
@@ -78,7 +81,7 @@ async def register_studio(
     user_model.studio_id = existing_studio.id
     db.add(user_model)
     db.commit()
-
+    db.refresh(user_model)
 
     publish_event(
         "trainee.registered",

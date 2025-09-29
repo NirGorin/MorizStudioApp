@@ -58,3 +58,27 @@ class UserResponse(BaseModel):
 
    
     model_config = ConfigDict(from_attributes=True)
+
+class TraineeProfileUsersMatchResponse(BaseModel):
+    id: int
+    username: str  
+    email: Optional[EmailStr] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    role: str  
+    studio_id: Optional[int] = None
+    phone_number: Optional[str] = None
+    trainee_id: Optional[int] = None
+    profile_id: int
+    age: int
+    gender: str
+    height_cm: int
+    weight_kg: int
+    level: str
+    number_of_week_training: int
+    limitations: Optional[str] = None
+    ai_status: str
+    ai_summary: Optional[str] = None
+    ai_json: Optional[str] = None
+    
+    model_config = ConfigDict(from_attributes=True)

@@ -19,15 +19,20 @@ router = APIRouter(prefix="/trainee_profile", tags=["trainee_profile"])
 
 @router.post("/create_trainee_profile", status_code=status.HTTP_201_CREATED)
 async def create_trainee_profile(
-    profile: CreateTraineeProfileRequest,    
+    profile: CreateTraineeProfileRequest,
     background_tasks: BackgroundTasks,
-    db: db_dependecy,           
+    db: db_dependecy,
     user: user_dependecy
 ):
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
+
     if user.get("role") == "trainer":
         raise HTTPException(status_code=403, detail="User role not allowed to create trainee profile")
+
+    existing = db.query(TraineeProfile).filter(TraineeProfile.user_id == user.get("id")).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Trainee profile already exists for this user")
 
     trainee_profile = TraineeProfile(
         age=profile.Age,
@@ -37,7 +42,7 @@ async def create_trainee_profile(
         level=profile.Level,
         number_of_week_training=profile.Number_Of_Week_Training,
         limitations=profile.Limitation,
-        user_id=user.get("id"),
+        user_id=user.get("id"),       
         ai_status="queued",
     )
     db.add(trainee_profile)
@@ -63,7 +68,9 @@ async def create_trainee_profile(
         pass
 
     background_tasks.add_task(process_profile_in_background, trainee_profile.id)
+
     return {"message": "Trainee profile created successfully", "profile_id": trainee_profile.id}
+
 
 @router.get("/trainees/{profile_id}/profile_cache", status_code=status.HTTP_200_OK)
 async def get_trainee_profile_cache_only(profile_id: int,db: db_dependecy,
@@ -95,7 +102,7 @@ async def get_trainee_profile(
     tp = db.query(TraineeProfile).filter(TraineeProfile.id == profile_id).first()
     if not tp:
         raise HTTPException(status_code=404, detail="Trainee profile not found")
-    if user.get("id") != tp.user_id and user.get("role") == "trainee":
+    if user.get("id") != tp.user_id or user.get("role") == "trainee":
         raise HTTPException(status_code=403, detail="Not allowed to access this trainee profile")
 
     
