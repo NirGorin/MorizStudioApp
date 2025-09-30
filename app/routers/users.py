@@ -5,7 +5,7 @@ import redis
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from app.schemas import CreateUserRequest, UpdatePasswordRequest, updateUsernameRequest,UserResponse
+from app.schemas import CreateUserRequest, UpdatePasswordRequest, updateUsernameRequest,UserResponse,UpdateUserRequest
 from .auth import get_db, get_current_user, db_dependecy, bcryptcontext
 from ..models import User  
 
@@ -77,7 +77,7 @@ def delete_user_by_username(username: str, db: db_dependecy, user: user_dependec
 
 
 @router.put("/{user_id}/update_user")
-def update_user(user_id: int, user: CreateUserRequest, db: db_dependecy, user_check: user_dependecy):
+def update_user(user_id: int, user: UpdateUserRequest, db: db_dependecy, user_check: user_dependecy):
     if  not user_check:
         raise HTTPException(status_code=403, detail="Not authorized to update user")
     user_model = db.query(User).filter(User.id == user_id).first()
@@ -87,6 +87,7 @@ def update_user(user_id: int, user: CreateUserRequest, db: db_dependecy, user_ch
     user_model.last_name = user.Last_Name
     user_model.email = user.Email
     user_model.phone_number = user.Phone_Number
+    user_model.role=user.Role
     db.commit()
     db.refresh(user_model)
     

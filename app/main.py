@@ -1,11 +1,19 @@
 #main file:
 from fastapi import FastAPI
-
+import os
 from app.database import engine, Base
 from app.routers import  auth,users,trainee_profile,studios,admin
 
 app=FastAPI()
-Base.metadata.create_all(bind=engine)
+
+@app.get("/healthz")
+def healthz():
+    return {"ok": True}
+
+if os.getenv("RUN_SYNC_DB") == "true":
+    Base.metadata.create_all(bind=engine)
+
+
 
 
 

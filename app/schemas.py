@@ -59,6 +59,19 @@ class UserResponse(BaseModel):
    
     model_config = ConfigDict(from_attributes=True)
 
+class UpdateUserRequest(BaseModel):
+    Email: Optional[EmailStr] = None
+    First_Name: Optional[str] = None
+    Last_Name: Optional[str] = None
+    Role: str  
+    Phone_Number: Optional[str] = None
+
+    
+
+   
+    model_config = ConfigDict(from_attributes=True)
+
+
 class TraineeProfileUsersMatchResponse(BaseModel):
     id: int
     username: str  

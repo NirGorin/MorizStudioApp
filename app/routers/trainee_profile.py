@@ -102,7 +102,7 @@ async def get_trainee_profile(
     tp = db.query(TraineeProfile).filter(TraineeProfile.id == profile_id).first()
     if not tp:
         raise HTTPException(status_code=404, detail="Trainee profile not found")
-    if user.get("id") != tp.user_id or user.get("role") == "trainee":
+    if user.get("id") != tp.user_id or user.get("role") == "trainer":
         raise HTTPException(status_code=403, detail="Not allowed to access this trainee profile")
 
     
@@ -130,6 +130,8 @@ async def get_trainee_profile(
         "number_of_week_training": tp.number_of_week_training,
         "limitations": tp.limitations,
         "ai_status": tp.ai_status,
+        "ai_summary": tp.ai_summary,
+        "ai_json": tp.ai_json,
     }
     try:
         await r.set(cache_key, json.dumps(payload), ex=CACHE_TTL_SECONDS)

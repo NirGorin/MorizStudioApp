@@ -184,7 +184,7 @@ async def get_trainee_profile_cach_admin_only(
     status_code=status.HTTP_200_OK,
     response_model=List[TraineeProfileUsersMatchResponse]
 )
-async def get_trainee_profiles_users_match(
+async def get_trainee_profiles_and_users(
     studio_id: int,
     db: db_dependecy,
     user: user_dependecy
@@ -211,7 +211,7 @@ async def get_trainee_profiles_users_match(
 
     result = [
         TraineeProfileUsersMatchResponse(
-            user_id=u.id,
+            id=u.id,
             first_name=u.first_name,
             last_name=u.last_name,
             username=u.username,
