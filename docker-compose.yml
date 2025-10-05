@@ -1,0 +1,72 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: moriz_api
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN:-}
+
+      PORT: ${PORT}
+      APP_MODULE: ${APP_MODULE}
+
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      - db
+      - redis
+
+    volumes:
+      - ./:/app:rw
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 120s
+      timeout: 5s
+      retries: 5
+
+    command: ["/entrypoint.sh"]
+
+  db:
+    image: postgres:17
+    container_name: moriz_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      TZ: "UTC"
+    ports:
+      - "5433:5432"
+    volumes:
+      - moriz_db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: moriz_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - moriz_redis_data:/data
+
+  adminer:
+    image: adminer:latest
+    container_name: morizstudioapp-adminer-1
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  moriz_db_data:
+  moriz_redis_data:
