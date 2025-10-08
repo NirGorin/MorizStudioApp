@@ -21,3 +21,12 @@ testdb.db
 # OS junk
 .DS_Store
 Thumbs.db
+
+.feature_sha.txt
+
+# Local data (docker volumes)
+pgdata/
+redis-data/
+data/
+caddy_data/
+caddy_config/
