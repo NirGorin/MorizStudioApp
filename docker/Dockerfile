@@ -7,13 +7,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PORT=8000
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential curl netcat-openbsd \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential curl netcat-openbsd \
-    libpq-dev pkg-config \
-    && rm -rf /var/lib/apt/lists/*
+    bash curl ca-certificates netcat-openbsd \
+    build-essential libpq-dev pkg-config \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -23,7 +19,8 @@ RUN if [ -f "requirements.txt" ]; then pip install --no-cache-dir -r requirement
 COPY . /app
 
 COPY docker/entrypoint.sh /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["/bin/bash", "/entrypoint.sh"]
+CMD ["/entrypoint.sh"]
